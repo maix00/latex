@@ -1,0 +1,196 @@
+\NeedsTeXFormat{LaTeX2e} % mmwv20200819
+\ProvidesPackage{HYY_style_Book}
+% 2023-01-08-Revised
+
+%% 文档类型请使用ctexbook或book
+
+%% 文字支持
+%% https://blog.csdn.net/xovee/article/details/115339060
+%% https://blog.csdn.net/u012487272/article/details/80278188
+\RequirePackage[utf8]{inputenc} % 输入编码
+\RequirePackage[russian, english]{babel} % 多文字支持
+	% 可选参数中最后一个是显示的语言
+	% 修改下方文档的语言用如下命令
+	% \selectlanguage{english}
+	\babeltags{ru = russian} % 语言简称
+	% 局部使用某种语言可以因此使用 \textru{} 命令 以及 ru 环境
+	\addto{\captionsenglish}{
+		\renewcommand{\bibname}{Reference}
+		\renewcommand{\contentsname}{Contents}
+		\renewcommand\figurename{Figure}%
+		% 中文支持
+		\renewcommand\abstractname{摘要}
+		\renewcommand\contentsname{\centerline{目次}}
+	}
+\RequirePackage[T1, T2A]{fontenc} % 字体编码
+% 在使用非ctex类文档类型却需要使用中文时使用
+% \RequirePackage{ctex}
+% 字体设置
+\setmainfont{Times New Roman}
+% \setmonofont{Courier New}
+\setsansfont{Arial}
+
+%% 集成数学输入符号与环境
+\RequirePackage{amsmath, amsfonts, amssymb, amsthm, bm, extarrows,mathrsfs, esint, nicematrix, tikz, cancel}
+\usetikzlibrary{calc}
+\allowdisplaybreaks[4] % 允许align环境换行
+\RequirePackage{siunitx} % 国际单位（si）
+
+%% 页面布局
+\RequirePackage{multicol} % 多栏文本
+\RequirePackage{changepage} % 局部调整页边等（adjustwidth）
+\RequirePackage{verbatim} % 多行注释等（comment）
+\RequirePackage{setspace} % 局部调整行间距（spacing）
+\RequirePackage{balance} % 双栏文本的平衡
+%\balance
+%\RequirePackage{flushend} % 双栏文本的平衡
+\RequirePackage{geometry} % 页面布局
+	\geometry{top=25mm,bottom=25mm,left=25mm,right=25mm} % 页面布局
+
+\RequirePackage{framed}
+\RequirePackage{xcolor} % 颜色
+\RequirePackage{graphicx} % 图片
+\RequirePackage{float} % 图片浮动
+\RequirePackage{array} % 表格
+\RequirePackage{longtable} % 长表格
+\RequirePackage{booktabs, tabularx} % 表格顶线等
+\RequirePackage{multirow} % 表格内部跨行
+\RequirePackage{bigstrut} % 表格间隔调整
+\RequirePackage{bigdelim} % 跨行表格的定界符
+\RequirePackage{cprotect} % 脆落命令保护
+\RequirePackage{listings} % 代码环境
+\RequirePackage{url} % 链接
+\RequirePackage{subcaption} % 子标题
+\RequirePackage[titles]{tocloft}
+\RequirePackage{indentfirst} % 首行缩进
+\RequirePackage{caption} % 设置浮动体的标题
+\RequirePackage{enumitem} % 定制列表环境
+\RequirePackage{paralist}
+	\let\itemize\compactitem
+	\let\enditemize\endcompactitem
+	\let\enumerate\compactenum
+	\let\endenumerate\endcompactenum
+	\let\description\compactdesc
+	\let\enddescription\endcompactdesc
+\RequirePackage{ulem} % 下划线
+\RequirePackage{calc} % 尺寸计算
+\RequirePackage[titletoc, title]{appendix} % 附录
+\RequirePackage{etoolbox}
+\AtBeginEnvironment{thebibliography}{%
+    \phantomsection
+    \addcontentsline{toc}{section}{\refname}
+    }
+\RequirePackage{hyperref} % 超链接
+	\hypersetup{%
+		%         xetex,
+		% unicode=false, % hyperref 和 xetex 同时使用时不能开启 Unicode 选项.
+         pdfstartview=FitH,
+         CJKbookmarks=true,
+         bookmarksnumbered=true,
+         bookmarksopen=true,
+         colorlinks, %注释掉此项则交叉引用为彩色边框(将colorlinks和pdfborder同时注释掉)
+         pdfborder=001,   %注释掉此项则交叉引用为彩色边框
+		 allcolors=red,
+		 breaklinks=true}%
+\RequirePackage{cleveref}%交叉引用
+
+%% Coding
+\RequirePackage{pgffor}
+\RequirePackage{xparse}
+
+%% 计数器
+\RequirePackage{chngcntr} % 计数器的修改
+\counterwithout{equation}{chapter} % 解除关联
+% \counterwithin{equation}{chapter}  % 设置新的关联
+\theoremstyle{definition}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}{命题}[section]
+\newtheorem{corollary}{推论}[section]
+\newtheorem{exercise}{习题}[section]
+\newcommand{\newFramedEnvironment}[2]{
+	\ExplSyntaxOn
+    \NewDocumentEnvironment{#1}{oo}{
+		\begin{framed}
+			\vspace{-0.5\baselineskip}
+			\IfNoValueTF{##1}{
+				\csname begin\endcsname{#2}
+					\IfNoValueTF{##2}{}{
+						\csname label\endcsname{##2}
+					}
+			}{
+				\csname begin\endcsname{#2}[##1]
+					\IfNoValueTF{##2}{
+						\csname label\endcsname{##1}
+					}{
+						\csname label\endcsname{##2}
+					}
+			}
+			\quad\\ \indent
+	}{
+			\csname end\endcsname{#2}
+			\vspace{-0.5\baselineskip}
+		\end{framed}
+	}
+	\ExplSyntaxOff
+}
+\newFramedEnvironment{framedTheorem}{theorem}
+\newFramedEnvironment{framedDefinition}{definition}
+\newFramedEnvironment{framedProposition}{proposition}
+\newFramedEnvironment{framedCorollary}{corollary}
+\newFramedEnvironment{framedExercise}{exercise}
+
+%% 特别字符
+\newcommand{\DD}{\mathrm{D}} % 微分符号 D
+\newcommand{\dd}{\mathrm{d}} % 微分符号 d
+\newcommand{\CC}{\mathrm{C}} % 连续可微符号 C
+\newcommand{\closed}[1]{\bar{#1}} % 短闭包
+\newcommand{\longclosed}[1]{\overline{#1}} % 长闭包
+% 文字符号
+\newcommand{\rmclosed}{\mathrm{Cl}\ } % 文字闭包
+\newcommand{\rmtr}{\mathrm{tr}\ } % 方阵的迹
+\newcommand{\rmrank}{\mathrm{rank}\ }
+\newcommand{\rmdiag}{\mathrm{diag}} % 对角阵
+\newcommand{\rmim}{\mathrm{im}\ }
+\newcommand{\rmran}{\mathrm{ran}\ }
+\newcommand{\rmker}{\mathrm{ker}\ }
+\newcommand{\rmcok}{\mathrm{cok}\ }
+\newcommand{\rmspan}{\mathrm{span}}
+\newcommand{\rmspanclose}{\overline{\mathrm{span}}}
+\newcommand{\rmae}{\mathrm{ae}}
+\newcommand{\rmas}{\mathrm{as}}
+\newcommand{\rmsp}{\mathrm{sp}\ }
+\newcommand{\rmspp}{\mathrm{sp}_{\mathrm{p}}\ }
+\newcommand{\rmrsp}{\mathrm{rsp}\ }
+\newcommand{\rmind}{\mathrm{ind}\ }
+\newcommand{\rmrepart}{\mathrm{re}\ }
+\newcommand{\rmimpart}{\mathrm{im}\ }
+\newcommand{\rmmultiply}[1]{\mathrm{m}_{#1}}
+% 粗体符号
+\newcommand{\mtalpha}{\bm{\alpha}}
+\newcommand{\mtbeta}{\bm{\beta}}
+\newcommand{\mtvarphi}{\bm{\varphi}}
+\newcommand{\mttheta}{\bm{\theta}}
+\newcommand{\mtpsi}{\bm{\psi}}
+\newcommand{\mtksi}{\bm{\xi}}
+\newcommand{\mtz}{\bm{0}}
+\newcommand{\mta}{\bm{A}}
+\newcommand{\mtb}{\bm{B}}
+\newcommand{\mtc}{\bm{C}}
+\newcommand{\mtd}{\bm{D}}
+\newcommand{\mtx}{\bm{x}}
+\newcommand{\mti}{\bm{I}}
+\newcommand{\mtp}{\bm{P}}
+\newcommand{\mtq}{\bm{Q}}
+\newcommand{\mto}{\bm{O}}
+\newcommand{\mbt}{\mathbb{T}} % 环
+\newcommand{\mbinterval}{\mathbb{I}} % 区间
+\newcommand{\mbc}{\mathbb{C}} % 复数
+\newcommand{\mbz}{\mathbb{Z}} % 整数
+\newcommand{\mbn}{\mathbb{N}} % 自然数
+\newcommand{\mbzp}{\mathbb{Z}_+} % 正整数
+\newcommand{\mbq}{\mathbb{Q}} % 有理数
+\newcommand{\mbr}{\mathbb{R}} % 实数
+\newcommand{\mbf}{\mathbb{F}} % 域 F
+\newcommand{\mbk}{\mathbb{K}} % 数域 K
+\newcommand{\mbe}{\mathbb{E}} % Euclid数域
